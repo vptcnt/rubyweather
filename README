@@ -14,14 +14,14 @@ or install as a RubyGem:
 
   sudo gem install rubyweather
 
-You can also check out the latest copy via subversion from svn://rubyforge.org//var/svn/rubyweather/trunk.
-If you would like to contribute back your changes to the code, please contact me via the rubyforge project 
-site to obtain a subversion account.
+You can also check out the latest copy via subversion from https://rubyweather.googlecode.com/svn/trunk/.
+If you would like to contribute back your changes to the code, please contact me via the RubyForge or
+Google Code project site to obtain a subversion account.
 
 RubyWeather can also be installed as a Rails plugin using the following command from your Rails application's
 directory:
 
-  ./script/plugin install -x svn://rubyforge.org//var/svn/rubyweather/trunk
+  ./script/plugin install -x https://rubyweather.googlecode.com/svn/trunk
 
 
 === Examples
