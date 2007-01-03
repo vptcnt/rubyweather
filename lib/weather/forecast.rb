@@ -9,10 +9,10 @@ require 'ostruct'
 require File.dirname(File.expand_path(__FILE__)) + '/util'
 
 module Weather
-
+  
   # Namespace module for weather data objects.
   module Forecast
-  
+    
     # Contains several days of weather data.
     # The forecast object includes the Enumerable mixin, so that you can iterate
     # over all of the days in the forecast using the standard ruby mechanisms as follows:
@@ -60,9 +60,9 @@ module Weather
         element = xml.root.elements['dayf'].elements["day[@d='#{num.to_s}']"]
         if not element
           case num
-            when 0 then daydisplay = "today"
-            when 1 then daydisplay = "tomorrow"
-            else daydisplay = "#{num} days from now"
+          when 0 then daydisplay = "today"
+          when 1 then daydisplay = "tomorrow"
+          else daydisplay = "#{num} days from now"
           end
           raise "Sorry, there is no data available for #{daydisplay}"
         else
@@ -149,7 +149,7 @@ module Weather
     
     # Abstract class that all Forecast entities are based on.
     class Conditions
-    
+      
       # For elements in the forecast that we have not defined an explicit accessor,
       # this allows accessing the raw underlying data in the forecast xml.
       def method_missing(symbol)
@@ -160,9 +160,10 @@ module Weather
         end
       end
       
-      # The wind conditions as an anonymous object (i.e. wind.d for wind
-      # direction, wind.s for wind speed, etc.) See the <wind> element in the 
-      # weather.com XML data spec for more info.
+      # The wind conditions as an anonymous object (i.e. wind.d or wind.direction for 
+      # wind direction, wind.s or wind.speed for wind speed, wind.h or wind.heading for
+      # heading, etc.) See the <wind> element in the weather.com XML data spec for 
+      # more info.
       def wind
         fix_wind(complex_attribute(@xml.elements['wind']))
       end
@@ -173,14 +174,14 @@ module Weather
         Time.parse(self.lsup)
       end
       
-    
+      
       private
       # The element specified by name as a cleaned-up temperature value.
       # That is, if the temperature is "N/A", then nil is returned; otherwise
       # the value is converted to an integer.
       def clean_temp(name)
         temp = @xml.elements[name].text
-      
+        
         if (temp == "N/A")
           return nil
         else
@@ -202,6 +203,8 @@ module Weather
         return OpenStruct.new(obj)
       end
       
+      # Adds more verbose names for wind properties. For example, "speed" for wind speed
+      # rather than just "s".
       def fix_wind(obj)
         obj.heading = obj.t
         obj.direction = obj.d.to_i
@@ -224,6 +227,8 @@ module Weather
         @xml = element
       end
       
+      # The numeric ID for the icon representing current conditions.
+      # You can find the corresponding icons packaged with RubyWeather in the example/weather_32 directory.
       def icon
         xml.elements['icon'].text.to_i
       end
@@ -255,9 +260,9 @@ module Weather
     # Abstract class representing either a day or night in the daily forecast (note that "future" can include today).
     class FutureConditions < Conditions
       attr_reader :xml
-    
+      
       @xml
-    
+      
       def initialize(element)
         if (not element.kind_of? REXML::Element)
           raise "The xml element given to the Day/Night constructor must be a valid REXML::Element"
@@ -289,6 +294,8 @@ module Weather
         Time.local(Time.now.year, mon, day)
       end
       
+      # The numeric ID for the icon representing these forecast conditions.
+      # You can find the corresponding icons packaged with RubyWeather in the example/weather_32 directory.
       def icon
         mypart.elements['icon'].text.to_i
       end
@@ -330,7 +337,7 @@ module Weather
         minute = minute.to_i
         Time.local(date.year, date.month, date.day, hour, minute)
       end
-
+      
     end
     
     # The daytime part of the forecast for a given day.
@@ -338,17 +345,17 @@ module Weather
       def initialize(element)
         super(element)
       end
-    
+      
       def temp
         high
       end
       alias tmp temp
       alias temperature temp
-    
+      
       private 
-        def mypart
-          @xml.elements['part[@p="d"]']
-        end
+      def mypart
+        @xml.elements['part[@p="d"]']
+      end
     end
     
     # The nighttime part of a forecast for a given day.
@@ -362,11 +369,11 @@ module Weather
       end
       alias tmp temp
       alias temperature temp
-    
+      
       private
-        def mypart
-          @xml.elements['part[@p="n"]']
-        end
+      def mypart
+        @xml.elements['part[@p="n"]']
+      end
     end
   end
   
