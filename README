@@ -83,10 +83,10 @@ There are a lot of attributes you can fetch for a forecast. Here are just a few:
 +latest_update+:: The datetime when the conditions were last measured/forecast.
 
 Additionally, most of the attributes for a given day in the raw weather.com xml data are
-also directly accessible. For example, you can call <tt>forecast.tomorrow.dewp</tt> to get the dewpoint, because the xml file
-contains a <tt>dewp</tt> element for that day. Have a look at <tt>test/test_weather.xml</tt> to see what data is
-available in the xml file. Note though that raw xml element values will be returned as a string, without any nice
-class casting or unit conversion.
+also directly accessible. For example, you can call <tt>forecast.tomorrow.dewp</tt> to get the dewpoint, because 
+the xml file contains a <tt>dewp</tt> element for that day. Have a look at <tt>test/test_weather.xml</tt> to see 
+what data is available in the xml file. Note though that raw xml element values will be returned as a string, \
+without any nice class casting or unit conversion.
 
 Other programmers are encouraged to add more functionality to the <tt>lib/forecast.rb</tt> module to provide better
 accessor methods for the underlying xml data. See below for how to obtain subversion access to contribute
@@ -95,8 +95,9 @@ your changes back to the project.
 === Caching Forecast Data
 
 RubyWeather supports data caching using the memcached[http://www.danga.com/memcached/] daemon. This allows for
-much quicker response time -- especially if you have a lot of clients accessing the weather data -- and is 
-just a polite thing to do in regards weather.com's servers.
+much quicker response time -- especially if you have a lot of clients accessing the weather data -- and it's 
+just a polite thing to do in regards to weather.com's servers.
+
 If you have a memcached server running, you can turn on data caching as follows:
 
   s = Weather::Service.new
@@ -108,8 +109,8 @@ From now on, any fetch_forecast calls made on this service will cache their data
 server will not be queried again as long as the data is cached.
 
 You can check if a forecast came from the cache by calling <tt>#from_cache?</tt>, which returns true if this
-forecast came from the local cache, or <tt>#cached_on</tt>, which returns the datetime when this forecast was
-entered into the cache or nil if the forecast didn't come from the cache.
+forecast came from the local cache. You can also call <tt>#cached_on</tt> to find out when this forecast was entered
+into the cache or nil if the forecast didn't come from the cache.
 
 The above requires that a ruby memcache client be installed. RubyWeather has been tested with the 
 Ruby-MemCache[http://www.deveiate.org/projects/RMemCache] implementation which you can install using:
