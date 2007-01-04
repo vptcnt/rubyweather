@@ -27,8 +27,8 @@ directory:
 === Examples
 
 First, we need to find out the weather.com location code for your city.
-This will print out a list of locations and their codes matching the 
-string "Toronto":
+The following code will print out a list of locations and their codes 
+matching the string "Toronto":
 
   require 'rubygems'
   require_gem 'rubyweather'
