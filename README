@@ -85,7 +85,7 @@ There are a lot of attributes you can fetch for a forecast. Here are just a few:
 Additionally, most of the attributes for a given day in the raw weather.com xml data are
 also directly accessible. For example, you can call <tt>forecast.tomorrow.dewp</tt> to get the dewpoint, because the xml file
 contains a <tt>dewp</tt> element for that day. Have a look at <tt>test/test_weather.xml</tt> to see what data is
-available in the xml file. Note though that raw xml elements will be returned as a string, without any nice
+available in the xml file. Note though that raw xml element values will be returned as a string, without any nice
 class casting or unit conversion.
 
 Other programmers are encouraged to add more functionality to the <tt>lib/forecast.rb</tt> module to provide better
