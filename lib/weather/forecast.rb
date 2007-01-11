@@ -126,7 +126,6 @@ module Weather
       #   forecast.current.latest_update
       #   
       def latest_update
-        puts xml.root.to_s
         Time.parse(xml.root.elements['dayf'].elements['lsup'].text)
       end
       

@@ -19,7 +19,7 @@ module Weather
     # Returns the forecast data fetched from the weather.com xoap service for the given location and number of days.
     def fetch_forecast(location_id, days = 5)
       
-      days = 5 if days.nil? or days.empty?
+      days = 5 if days.nil? or days == 0 or days == ""
       
       # try to pull the partner_id and license_key from the environment if not already set
       partner_id = ENV['WEATHER_COM_PARTNER_ID'] unless partner_id
@@ -44,7 +44,6 @@ module Weather
       
       # default to metric (degrees fahrenheit are just silly :)
       unit = imperial ? "s" : "m"
-      puts "#{location_id} #{partner_id} #{license_key} DAYS: #{days.inspect}"
       host = "xoap.weather.com"
       url = "/weather/local/#{location_id}?cc=*&dayf=#{days}&prod=xoap&par=#{partner_id}&key=#{license_key}&unit=#{unit}"
       
@@ -62,7 +61,6 @@ module Weather
           cache.set("#{location_id}:#{days}", doc.to_s, cache_expiry)
         end
       end
-      puts xml
       doc = REXML::Document.new(xml)
 
       Forecast::Forecast.new(doc)
