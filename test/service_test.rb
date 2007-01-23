@@ -69,7 +69,7 @@ class ServiceTest < Test::Unit::TestCase
     
     @service.cache.delete("#{TEST_LOCATION}:5")
     
-    assert_equal @service.fetch_forecast(TEST_LOCATION, 5).xml.to_s, @service.fetch_forecast(TEST_LOCATION, 5).xml.to_s.gsub(/ cached_on='.*?'/, '')
+    assert_equal @service.fetch_forecast(TEST_LOCATION, 5).xml.to_s, @service.fetch_forecast(TEST_LOCATION, 5).xml.to_s.gsub(/ cached_on=['"].*?['"]/, '')
     
     assert @service.fetch_forecast(TEST_LOCATION, 5).from_cache?
     

@@ -20,27 +20,30 @@ module Weather
     #   myforecast.each do |d|
     #     print d.outlook
     #   end
-    class Forecast      
+    class Forecast
       include Enumerable
       
       attr_reader :xml
       
       # Instantiate a Forecast object from the specified Weather.com REXML::Document.
       def initialize(weather_xmldoc)
-        if (not weather_xmldoc.kind_of? REXML::Document)
-          raise "The xml document given to the Forecast constructor must be a valid REXML::Document"
+        if (not weather_xmldoc.kind_of?($USE_LIBXML ? XML::Document : REXML::Document))
+          raise "The xml document given to the Forecast constructor must be a valid REXML::Document or XML::Document"
         end
         
         @xml = weather_xmldoc
         
         # add the lsup (latest update) and cached_on elements to individual days to make parsing easier later on
         # FIXME: I can't seem to add the lsup as an element (which would be the consistent way to do it)... adding it as an attribute seems to work though
-        if @xml.root.elements['dayf'] and @xml.root.elements['dayf'].elements['lsup']
-          lsup = @xml.root.elements['dayf'].elements['lsup'].text
-        end
+        dayf = $USE_LIBXML ? @xml.root.find('dayf').first : @xml.root.elements['dayf']
+        lsup = $USE_LIBXML ? dayf.find_first('//dayf/lsup') : dayf.elements['lsup'] if dayf
         
-        REXML::XPath.match(@xml, "//dayf/day").each do |dxml|
-          dxml.add_attribute "lsup", lsup
+        if dayf and lsup
+          latest_update = lsup.text
+          
+          ($USE_LIBXML ? @xml.find('//dayf/day') : REXML::XPath.match(@xml, "//dayf/day")).each do |dxml|
+            dxml.add_attribute "lsup", latest_update
+          end
         end
       end
       
@@ -80,7 +83,7 @@ module Weather
       # Iterates over all of the days in this Forecast.
       def each(&block)
         first = true
-        REXML::XPath.match(xml, "//dayf/day").each do |dxml|
+        ($USE_LIBXML ? @xml.find('//dayf/day') : REXML::XPath.match(@xml, "//dayf/day")).each do |dxml|
           d = Day.new(dxml)
           
           # if it is after 3 PM, use current conditions
@@ -220,8 +223,8 @@ module Weather
       @xml
       
       def initialize(element)
-        if (not element.kind_of? REXML::Element)
-          raise "The xml element given to the Day/Night constructor must be a valid REXML::Element"
+        if (not element.kind_of?($USE_LIBXML ? XML::Node : REXML::Element))
+          raise "The xml element given to the Day/Night constructor must be a valid REXML::Element or XML::Node"
         end
         @xml = element
       end
@@ -263,7 +266,7 @@ module Weather
       @xml
       
       def initialize(element)
-        if (not element.kind_of? REXML::Element)
+        if (not element.kind_of?($USE_LIBXML ? XML::Node : REXML::Element))
           raise "The xml element given to the Day/Night constructor must be a valid REXML::Element"
         end
         @xml = element

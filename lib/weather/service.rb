@@ -5,7 +5,25 @@
 #
 
 require 'net/http'
-require 'rexml/document'
+
+# Use the much faster libxml if available; fall back to REXML otherwise
+begin
+  begin
+    require 'xml/libxml'
+  rescue LoadError
+    require 'rubygems'
+    require 'xml/libxml'
+  end
+  $USE_LIBXML = true
+rescue LoadError
+  puts "AND HOPEFULLY HERE TOO"
+  $USE_LIBXML = false
+  require 'rexml/document'
+end
+
+require File.dirname(File.expand_path(__FILE__)) + '/../libxml_rexml_compat' if $USE_LIBXML
+
+#puts "Using libxml? #{$USE_LIBXML.inspect}"
 
 require File.dirname(File.expand_path(__FILE__)) + '/forecast'
 
@@ -54,14 +72,12 @@ module Weather
         xml = Net::HTTP.get(host, url)
         
         if cache?
-          # TODO: most of the processing time seems to be in parsing xml text to REXML::Document... 
-          #        maybe we should try caching some other serialized form? YAML?
-          doc = REXML::Document.new(xml)
-          doc.root.attributes['cached_on'] = Time.now 
+          doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
+          $USE_LIBXML ? doc.root['cached_on'] = Time.now.to_s : doc.root.attributes['cached_on'] = Time.now 
           cache.set("#{location_id}:#{days}", doc.to_s, cache_expiry)
         end
       end
-      doc = REXML::Document.new(xml)
+      doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
 
       Forecast::Forecast.new(doc)
     end
@@ -69,7 +85,7 @@ module Weather
     # Returns the forecast data loaded from a file. This is useful for testing.
     def load_forecast(filename)
       file = File.new(filename)
-      doc = REXML::Document.new(file)
+      doc = $USE_LIBXML ? XML::Document.file(filename) : REXML::Document.new(file)
       
       Forecast::Forecast.new(doc)
     end
@@ -82,12 +98,12 @@ module Weather
       url = "/weather/search/search?where=#{search_string}"
       
       xml = Net::HTTP.get(host, url);
-      doc = REXML::Document.new(xml)
+      doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
       
       locations = {}
       
-      REXML::XPath.match(doc.root, "//loc").each do |loc|
-        locations[loc.attributes['id']] = loc.text
+      ($USE_LIBXML ? doc.find('//loc') : REXML::XPath.match(doc.root, "//loc")).each do 
+        |loc| locations[loc.attributes['id']] = loc.text
       end
       
       return locations

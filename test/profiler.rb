@@ -1,16 +1,11 @@
 require 'rubygems'
 require 'ruby-prof'
 
-
-
 require File.dirname(__FILE__) + '/../lib/weather/service'
 require File.dirname(__FILE__) + '/../lib/weather/forecast'
 require File.dirname(__FILE__) + '/../lib/weather/util'
 
-
-
 @filename = File.expand_path(File.dirname(__FILE__) + "/test_weather.xml")
-
 
 puts ""
 puts "Loading forecast..."
