@@ -125,7 +125,7 @@ module Weather
     
     # True if caching is enabled and at least one memcached server is alive, false otherwise.
     def cache?
-      @cache and cache.active? and not cache.servers.dup.delete_if{|s| !s.alive?}.empty?
+      @cache and cache.active?
     end
     
     # Turns off weather forecast caching.
@@ -161,9 +161,16 @@ module Weather
             require 'memcache'
           rescue LoadError
             require 'rubygems'
-            # We use Ruby-MemCache because it works. Despite my best efforts, I 
-            # couldn't get the memcache-client implementation working properly.
-            require_gem 'Ruby-MemCache'
+            # The rc-tools memcache client is waaaay faster than Ruby-MemCache,
+            # so try to use that if possible. However, I tried it a few months
+            # ago and couldn't get it to work. Version 1.2.1 seems to work though
+            # (and in all likelyhood some previous versions would have worked too,
+            # but better not take chances).
+            begin
+              gem 'memcache-client', '~> 1.2.1'
+            rescue Gem::LoadError
+              gem 'Ruby-MemCache'
+            end          
             require 'memcache'
           end
           super
