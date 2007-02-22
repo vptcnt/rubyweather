@@ -67,8 +67,16 @@ module Weather
       
       # puts "Using url: "+url
       
-      if cache? and xml = cache.get("#{location_id}:#{days}")
-      else
+      if cache?
+        begin
+          xml = cache.get("#{location_id}:#{days}")
+        rescue
+          # handle things gracefully if memcache chokes
+          xml = false
+        end
+      end
+      
+      unless xml
         xml = Net::HTTP.get(host, url)
         
         if cache?
@@ -125,7 +133,9 @@ module Weather
     
     # True if caching is enabled and at least one memcached server is alive, false otherwise.
     def cache?
-      @cache and cache.active?
+      @cache and cache.active? and 
+        servers = cache.instance_variable_get(:@servers) and 
+        servers.collect{|s| s.alive?}.include?(true)
     end
     
     # Turns off weather forecast caching.
