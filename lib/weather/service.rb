@@ -16,7 +16,6 @@ begin
   end
   $USE_LIBXML = true
 rescue LoadError
-  puts "AND HOPEFULLY HERE TOO"
   $USE_LIBXML = false
   require 'rexml/document'
 end
@@ -33,6 +32,8 @@ module Weather
   class Service
     attr_writer :partner_id, :license_key, :imperial
     attr_reader :partner_id, :license_key, :imperial
+    
+    XOAP_HOST = "xoap.weather.com"
     
     # Returns the forecast data fetched from the weather.com xoap service for the given location and number of days.
     def fetch_forecast(location_id, days = 5)
@@ -62,7 +63,6 @@ module Weather
       
       # default to metric (degrees fahrenheit are just silly :)
       unit = imperial ? "s" : "m"
-      host = "xoap.weather.com2"
       url = "/weather/local/#{location_id}?cc=*&dayf=#{days}&prod=xoap&par=#{partner_id}&key=#{license_key}&unit=#{unit}"
       
       # puts "Using url: "+url
@@ -77,7 +77,7 @@ module Weather
       end
       
       unless xml
-        xml = Net::HTTP.get(host, url)
+        xml = Net::HTTP.get(XOAP_HOST, url)
         
         if cache?
           doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
@@ -101,11 +101,10 @@ module Weather
     # Returns a hash containing location_code => location_name key-value pairs for the given location search string.
     # In other words, you can use this to find a location code based on a city name, ZIP code, etc.
     def find_location(search_string)
-      host = "xoap.weather.com"
       # FIXME: need to do url encoding of the search string!
       url = "/weather/search/search?where=#{search_string}"
       
-      xml = Net::HTTP.get(host, url);
+      xml = Net::HTTP.get(XOAP_HOST, url);
       doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
       
       locations = {}
