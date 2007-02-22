@@ -113,9 +113,11 @@ forecast came from the local cache. You can also call <tt>#cached_on</tt> to fin
 into the cache or nil if the forecast didn't come from the cache.
 
 The above requires that a ruby memcache client be installed. RubyWeather has been tested with the 
-Ruby-MemCache[http://www.deveiate.org/projects/RMemCache] implementation which you can install using:
+memcache-client[http://dev.robotcoop.com/Libraries/memcache-client/index.html] and 
+Ruby-MemCache[http://www.deveiate.org/projects/RMemCache]. memcache-client is much faster, so
+you're probably better off using it over Ruby-MemCache:
 
-  gem install Ruby-MemCache
+  gem install memcache-client
 
 === Sample Rails Controller
 
