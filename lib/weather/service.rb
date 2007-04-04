@@ -5,6 +5,7 @@
 #
 
 require 'net/http'
+require 'cgi'
 
 # Use the much faster libxml if available; fall back to REXML otherwise
 begin
@@ -23,7 +24,6 @@ end
 require File.dirname(File.expand_path(__FILE__)) + '/../libxml_rexml_compat' if $USE_LIBXML
 
 #puts "Using libxml? #{$USE_LIBXML.inspect}"
-require 'cgi'
 
 require File.dirname(File.expand_path(__FILE__)) + '/forecast'
 
