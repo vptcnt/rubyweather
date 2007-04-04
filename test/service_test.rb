@@ -58,6 +58,10 @@ class ServiceTest < Test::Unit::TestCase
   def test_find_location
     locations = @service.find_location("Toronto")
     assert(locations.has_key?(TEST_LOCATION))
+    
+    # test for spaces and other characters that need to be URL-encoded
+    locations = @service.find_location("London, United Kingdom")
+    assert(locations.has_key?("UKXX0085"))
   end
   
   def test_caching

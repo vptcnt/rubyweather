@@ -23,6 +23,7 @@ end
 require File.dirname(File.expand_path(__FILE__)) + '/../libxml_rexml_compat' if $USE_LIBXML
 
 #puts "Using libxml? #{$USE_LIBXML.inspect}"
+require 'cgi'
 
 require File.dirname(File.expand_path(__FILE__)) + '/forecast'
 
@@ -101,8 +102,7 @@ module Weather
     # Returns a hash containing location_code => location_name key-value pairs for the given location search string.
     # In other words, you can use this to find a location code based on a city name, ZIP code, etc.
     def find_location(search_string)
-      # FIXME: need to do url encoding of the search string!
-      url = "/weather/search/search?where=#{search_string}"
+      url = "/weather/search/search?where=#{CGI.escape(search_string)}"
       
       xml = Net::HTTP.get(XOAP_HOST, url);
       doc = $USE_LIBXML ? (p = XML::Parser.new; p.string = xml; p.parse) : REXML::Document.new(xml)
