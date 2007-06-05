@@ -22,16 +22,36 @@ RubyWeather can also be installed as a Rails plugin using the following command 
 directory:
 
   ./script/plugin install -x http://rubyweather.googlecode.com/svn/trunk
+  
+  
+== Obtaining a Free Weather.com License
+
+To use this library you will need a partner id and license key from
+weather.com. The service is completely free, but requires that you agree
+to weather.com's legal stuff, which, among other things, asks that your software
+to include a link back to the weather.com website (although this is not actually
+enforced in any way by the service).
+
+To obtain the free license visit http://www.weather.com/services/xmloap.html.
+This will also allow you to download an SDK that includes nice weather icons for
+use with the data.
+
+Note that weather.com doesn't seem to be enforcing the partner id/license key at this time.
+You can specify any value for partner id and license key (e.g. par=123456&key=abcdefg) and
+the weather.com service will happily accept it (in fact, you can even leave both fields blank,
+i.e. part=&key=). However, this is probably unintentional and subject to change, so it is
+highly recommended that you obtain a valid id and key.
 
 
 === Examples
 
-First, we need to find out the weather.com location code for your city.
-The following code will print out a list of locations and their codes 
+First, we need to find the weather.com location code for your city.
+
+The following Ruby code will print out a list of locations and their codes 
 matching the string "Toronto":
 
   require 'rubygems'
-  require_gem 'rubyweather'
+  gem 'rubyweather'
 
   require 'weather/service'
 
@@ -42,7 +62,7 @@ matching the string "Toronto":
   locations = service.find_location('Toronto')
   puts "Matching Locations: " + locations.inspect
 
-We can now use the code to fetch the weather data for our city:
+We can now use location the code to fetch the weather data for our city:
 
   forecast = service.fetch_forecast("CAXX0504", 5)
 
@@ -130,23 +150,6 @@ a simple weather forecast. To try this out:
 
 Fire up your Rails server, and go to <tt>/weather_portlet/forecast</tt> to see the controller in action.
 
-== Note About Weather.com Licensing & Registration
-
-To use this library you will need a partner id and license key from
-weather.com. The service is completely free, but requires that you agree
-to weather.com's legal stuff, which, among other things, asks that your software
-to include a link back to the weather.com website (although this is not actually
-enforced in any way by the service).
-
-To obtain the free license visit http://www.weather.com/services/xmloap.html.
-This will also allow you to download an SDK that includes nice weather icons for
-use with the data.
-
-Note that weather.com doesn't seem to be enforcing the partner id/license key at this time.
-You can specify any value for partner id and license key (e.g. par=123456&key=abcdefg) and
-the weather.com service will happily accept it (in fact, you can even leave both fields blank,
-i.e. part=&key=). However, this is probably unintentional and subject to change, so it is
-highly recommended that you obtain a valid id and key.
 
 == Software License
 
