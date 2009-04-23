@@ -2,7 +2,7 @@ require 'rake'
 
 Gem::Specification.new do |s|
   s.name = %q{rubyweather}
-  s.version = "1.2.1"
+  s.version = "1.2.1.1"
   s.date = %q{2008-05-06}
   s.summary = %q{Client library for accessing weather.com's xoap weather data.}
   s.email = %q{matt@roughest.net}
