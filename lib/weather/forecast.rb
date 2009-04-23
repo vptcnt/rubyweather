@@ -129,7 +129,13 @@ module Weather
       #   forecast.current.latest_update
       #   
       def latest_update
-        Time.parse(xml.root.elements['dayf'].elements['lsup'].text)
+        if Time.respond_to?(:strptime)
+          # FIXME: This is a band-aid for Ruby 1.9 (submitted by rodkoch at gmail dot com).
+          #        It disregards timezone conversions, so the returned time may be off by a few hours.
+          Time.strptime(xml.root.elements['dayf'].elements['lsup'].text, '%m/%d/%y %I:%M %p')
+        else
+          Time.parse(xml.root.elements['dayf'].elements['lsup'].text)
+        end
       end
       
       # The date and time when this forecast was last locally cached.
