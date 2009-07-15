@@ -32,12 +32,14 @@ class ServiceTest < Test::Unit::TestCase
   end
   
   def test_fetch_forecast
-    forecast = @service.fetch_forecast(TEST_LOCATION, 8)
+    forecast = @service.fetch_forecast(TEST_LOCATION, 5)
     
     assert_kind_of(Weather::Forecast::Forecast, forecast)
+    assert !forecast.xml.root.blank?, "Forecast XML data should be parsable so that a root element is present."
+    assert_not_equal "error", forecast.xml.root.name, "Weather service returned an error: #{forecast.xml.root.elements['err']}"  
     assert_equal("CAXX0504", forecast.location_code)
     assert_equal("Toronto", forecast.location_city)
-    assert_equal(8, forecast.entries.size)
+    assert_equal(5, forecast.entries.size)
   end
   
   def test_imperial_metric_choice
