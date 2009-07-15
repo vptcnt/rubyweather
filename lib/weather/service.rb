@@ -64,7 +64,7 @@ module Weather
       
       # default to metric (degrees fahrenheit are just silly :)
       unit = imperial ? "s" : "m"
-      url = "/weather/local/#{location_id}?cc=*&dayf=#{days}&par=#{partner_id}&key=#{license_key}&unit=#{unit}"
+      url = "/weather/local/#{location_id}?link=xoap&prod=xoap&cc=*&dayf=#{days}&par=#{partner_id}&key=#{license_key}&unit=#{unit}"
       
       #puts "Using url: "+url
       
